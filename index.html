@@ -5,42 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HonestStudy Dashboard</title>
-    <!-- Explicit link to your separate stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
     <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="logo">🔒 HonestStudy</div>
             <nav>
                 <a href="#" class="active">📊 Workspace</a>
             </nav>
 
-
-
-            <!-- Network Status Bar & Backup Controls Grouped Cleanly -->
-            <div class="backup-controls"
-                style="margin-top: auto; padding-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+            <div class="backup-controls">
                 <button id="export-btn">📥 Export Backup</button>
                 <label>
                     📤 Import Backup
                     <input type="file" id="import-input" accept=".json" style="display: none;">
                 </label>
             </div>
-
         </aside>
 
-        <!-- Main Dynamic Workspace View -->
         <main class="main-content">
             <header>
                 <h1 id="welcome-title">9th Grade Performance Tracker</h1>
                 <p id="countdown-banner">Initializing May 2027 timeline predictor sequence...</p>
             </header>
 
-            <!-- Metrics Summary Info Grid -->
             <section class="metrics-grid">
                 <div class="card">
                     <h3>📈 Verified Average</h3>
@@ -56,7 +47,6 @@
                 </div>
             </section>
 
-            <!-- Tab Menu Triggers -->
             <div class="tab-menu">
                 <button class="tab-btn active" data-target="grades-tab">📝 Grade Book</button>
                 <button class="tab-btn" data-target="focus-tab">⏱️ Focus Engine</button>
@@ -64,10 +54,8 @@
                 <button class="tab-btn" data-target="goals-tab">🎯 Target Predictor</button>
             </div>
 
-            <!-- Independent Scrolling Area for Tab Contents -->
             <section class="content-grid">
 
-                <!-- Tab Panel 1: Grades -->
                 <div id="grades-tab" class="tab-content active">
                     <div class="card">
                         <h3>Itemized Test Logs</h3>
@@ -95,7 +83,6 @@
                     </div>
                 </div>
 
-                <!-- Tab Panel 2: Focus Timer Stopwatch -->
                 <div id="focus-tab" class="tab-content">
                     <div style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%; align-items: center;">
                         <div class="card stopwatch-box">
@@ -124,7 +111,6 @@
                     </div>
                 </div>
 
-                <!-- Tab Panel 3: Syllabus Tracking Registry -->
                 <div id="deadlines-tab" class="tab-content">
                     <div class="card">
                         <h3>9th Grade Subject Checklist & Chapters Remaining</h3>
@@ -142,57 +128,44 @@
                         </div>
                         <form id="syllabus-form" class="form-group">
                             <input type="text" id="syll-subject" placeholder="Subject Name" required>
-                            <input type="number" id="syll-chapters" placeholder="Chapters Left to Learn" min="0"
-                                required>
+                            <input type="number" id="syll-chapters" placeholder="Chapters Left to Learn" min="0" required>
                             <button type="submit" class="submit-btn">Add Subject Track</button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Tab Panel 4: Target Gap Analysis Predictor -->
                 <div id="goals-tab" class="tab-content">
-                    <div
-                        style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%; align-items: center; max-width: 500px;">
-
-                        <!-- Existing Target Predictor Card -->
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%; align-items: center; max-width: 500px;">
                         <div class="card" style="width: 100%;">
                             <h3>🎯 Academic Target Predictor</h3>
                             <div style="margin: 1.5rem 0; font-size: 1.05rem; line-height: 1.6;">
-                                <p>Your Current Verified Average: <strong id="predict-current-gpa"
-                                        style="color: var(--accent);">0.0%</strong></p>
+                                <p>Your Current Verified Average: <strong id="predict-current-gpa" style="color: var(--accent);">0.0%</strong></p>
                                 <div class="form-group" style="margin: 1rem 0 1.5rem 0;">
-                                    <label
-                                        style="display:block; width:100%; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">ENTER
-                                        YOUR GOAL GRADE %</label>
+                                    <label style="display:block; width:100%; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">ENTER YOUR GOAL GRADE %</label>
                                     <input type="number" id="target-goal-input" placeholder="e.g. 90" min="1" max="100">
                                     <button id="calculate-goal-btn" class="submit-btn">Calculate Gap</button>
                                 </div>
-                                <div id="prediction-result"
-                                    style="padding: 1rem; background-color: var(--bg-base); border-radius: 8px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.95rem;">
+                                <div id="prediction-result" style="padding: 1rem; background-color: var(--bg-base); border-radius: 8px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.95rem;">
                                     Enter a goal percentage above to analyze your performance gap.
                                 </div>
                             </div>
                         </div>
 
-                        <!-- NEW: Dynamic Line Chart Visualizer Canvas Box -->
                         <div class="card" style="width: 100%;">
                             <h3>📈 Performance Trend Matrix</h3>
                             <div style="position: relative; width: 100%; height: 260px; margin-top: 1rem;">
                                 <canvas id="gradeTrendChart"></canvas>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </section>
         </main>
     </div>
-    <!-- Chart.js Graphics Engine Library -->
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Core Application Modular Bootstrappers -->
     <script type="module" src="modules/storage.js"></script>
     <script type="module" src="modules/predictor.js"></script>
 </body>
-
 </html>

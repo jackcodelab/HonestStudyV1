@@ -49,7 +49,7 @@ export function renderGradebook() {
     }
 
     var finalAvg = aggregateTotal > 0 ? (aggregateScored / aggregateTotal) * 100 : 0;
-    setCurrentAverage(finalAvg); // Shares the current average with predictor.js via storage.js
+    setCurrentAverage(finalAvg);
     
     document.getElementById('total-items').innerText = studyDatabase.assignments.length;
     document.getElementById('overall-gpa').innerText = `${finalAvg.toFixed(1)}%`;
@@ -60,7 +60,7 @@ export function renderGradebook() {
 
 function updateChartGraphics() {
     var ctx = document.getElementById('gradeTrendChart');
-    if (!ctx) return;
+    if (!ctx || typeof Chart === 'undefined') return;
 
     if (gradingTrendChartInstance) gradingTrendChartInstance.destroy();
 
