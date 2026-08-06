@@ -1,7 +1,7 @@
-import { renderGradebook } from './components/Gradebook.js';
-import { initializeStopwatch } from './components/Stopwatch.js';
-import { renderSyllabus } from './components/Syllabus.js';
-import './predictor.js'; 
+import { renderGradebook } from './components/gradebook.js';
+import { initializeStopwatch } from './components/stopwatch.js';
+import { renderSyllabus } from './components/syllabus.js';
+import './components/predictor.js'; 
 
 document.addEventListener('DOMContentLoaded', () => {
     renderGradebook();

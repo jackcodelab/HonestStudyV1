@@ -1,5 +1,5 @@
 import { studyDatabase, saveDatabase, escapeHtml, setCurrentAverage } from '../storage.js';
-import { updateChartGraphics } from './GradeChart.js';
+import { updateChartGraphics } from './gradechart.js';
 
 const form = document.getElementById('assignment-form');
 if (form) {
