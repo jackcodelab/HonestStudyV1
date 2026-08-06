@@ -1,4 +1,4 @@
-import { studyDatabase, saveDatabase } from './storage.js';
+import { studyDatabase, saveDatabase } from '../storage.js';
 
 let timerInterval = null;
 let totalSeconds = studyDatabase.stopwatchTime || 0;

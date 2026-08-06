@@ -128,24 +128,30 @@
                         </div>
                         <form id="syllabus-form" class="form-group">
                             <input type="text" id="syll-subject" placeholder="Subject Name" required>
-                            <input type="number" id="syll-chapters" placeholder="Chapters Left to Learn" min="0" required>
+                            <input type="number" id="syll-chapters" placeholder="Chapters Left to Learn" min="0"
+                                required>
                             <button type="submit" class="submit-btn">Add Subject Track</button>
                         </form>
                     </div>
                 </div>
 
                 <div id="goals-tab" class="tab-content">
-                    <div style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%; align-items: center; max-width: 500px;">
+                    <div
+                        style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%; align-items: center; max-width: 500px;">
                         <div class="card" style="width: 100%;">
                             <h3>🎯 Academic Target Predictor</h3>
                             <div style="margin: 1.5rem 0; font-size: 1.05rem; line-height: 1.6;">
-                                <p>Your Current Verified Average: <strong id="predict-current-gpa" style="color: var(--accent);">0.0%</strong></p>
+                                <p>Your Current Verified Average: <strong id="predict-current-gpa"
+                                        style="color: var(--accent);">0.0%</strong></p>
                                 <div class="form-group" style="margin: 1rem 0 1.5rem 0;">
-                                    <label style="display:block; width:100%; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">ENTER YOUR GOAL GRADE %</label>
+                                    <label
+                                        style="display:block; width:100%; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">ENTER
+                                        YOUR GOAL GRADE %</label>
                                     <input type="number" id="target-goal-input" placeholder="e.g. 90" min="1" max="100">
                                     <button id="calculate-goal-btn" class="submit-btn">Calculate Gap</button>
                                 </div>
-                                <div id="prediction-result" style="padding: 1rem; background-color: var(--bg-base); border-radius: 8px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.95rem;">
+                                <div id="prediction-result"
+                                    style="padding: 1rem; background-color: var(--bg-base); border-radius: 8px; border: 1px dashed var(--border); color: var(--text-muted); font-size: 0.95rem;">
                                     Enter a goal percentage above to analyze your performance gap.
                                 </div>
                             </div>
@@ -164,8 +170,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <script type="module" src="modules/storage.js"></script>
-    <script type="module" src="modules/predictor.js"></script>
+    <!-- Link your main app entry point. Make sure the path matches your project structure -->
+    <script type="module" src="./app.js"></script>
 </body>
+
 </html>

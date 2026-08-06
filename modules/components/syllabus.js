@@ -1,8 +1,8 @@
-import { studyDatabase, saveDatabase, escapeHtml } from './storage.js';
+import { studyDatabase, saveDatabase, escapeHtml } from '../storage.js';
 
 const syllabusForm = document.getElementById('syllabus-form');
 if (syllabusForm) {
-    syllabusForm.addEventListener('submit', function (e) {
+    syllabusForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const taskInput = document.getElementById('syllabus-task');
         const taskText = taskInput.value.trim();
@@ -49,7 +49,7 @@ export function renderSyllabus() {
     });
 
     coreList.querySelectorAll('.task-toggle').forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
+        checkbox.addEventListener('change', function() {
             const idx = parseInt(this.getAttribute('data-index'), 10);
             studyDatabase.syllabus[idx].completed = this.checked;
             saveDatabase();
@@ -58,7 +58,7 @@ export function renderSyllabus() {
     });
 
     coreList.querySelectorAll('.task-remove').forEach(btn => {
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function() {
             const idx = parseInt(this.getAttribute('data-index'), 10);
             studyDatabase.syllabus.splice(idx, 1);
             saveDatabase();
