@@ -1,55 +1,53 @@
-// ==========================================================================
-// FEATURE COMPONENT MODULE: RUNTIME FOCUS TIMER STOPWATCH
-// ==========================================================================
-import { studyDatabase, saveDatabase, escapeHtml } from '../storage.js';
+import { studyDatabase, saveDatabase } from './storage.js';
 
-var clockInterval = null;
-var currentSessionSeconds = 0;
-var startBtn = document.getElementById('start-btn');
-var stopBtn = document.getElementById('stop-btn');
+let timerInterval = null;
+let totalSeconds = studyDatabase.stopwatchTime || 0;
 
-startBtn.addEventListener('click', () => {
-    startBtn.disabled = true;
-    stopBtn.disabled = false;
-    clockInterval = setInterval(() => {
-        currentSessionSeconds++;
-        document.getElementById('tracked-hours').innerText = formatTime(studyDatabase.totalSecondsLogged + currentSessionSeconds);
-        document.getElementById('clock-face').innerText = formatTime(currentSessionSeconds);
-    }, 1000);
-});
+const timeDisplay = document.getElementById('stopwatch-display');
+const startBtn = document.getElementById('stopwatch-start');
+const stopBtn = document.getElementById('stopwatch-stop');
+const resetBtn = document.getElementById('stopwatch-reset');
 
-stopBtn.addEventListener('click', () => {
-    clearInterval(clockInterval);
-    startBtn.disabled = false;
-    stopBtn.disabled = true;
-
-    var timestampStr = new Date().toLocaleDateString() + ' @ ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    studyDatabase.totalSecondsLogged += currentSessionSeconds;
-    studyDatabase.sessionLogs.unshift({ time: timestampStr, duration: formatTime(currentSessionSeconds) });
-    
-    currentSessionSeconds = 0;
-    document.getElementById('clock-face').innerText = "00:00:00";
-    saveDatabase();
-});
-
-export function renderStopwatchHistory() {
-    var tbody = document.getElementById('session-log-table');
-    tbody.innerHTML = '';
-    if (studyDatabase.sessionLogs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="2" style="color: var(--text-muted); text-align: center;">No focus sessions saved yet.</td></tr>';
-    } else {
-        studyDatabase.sessionLogs.forEach(log => {
-            var row = document.createElement('tr');
-            row.innerHTML = `<td>${escapeHtml(log.time)}</td><td style="text-align: right; color: var(--accent); font-weight: 600;">${escapeHtml(log.duration)}</td>`;
-            tbody.appendChild(row);
-        });
-    }
-    document.getElementById('tracked-hours').innerText = formatTime(studyDatabase.totalSecondsLogged);
+function formatTime(seconds) {
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+    const secs = String(seconds % 60).padStart(2, '0');
+    return `${hrs}:${mins}:${secs}`;
 }
 
-function formatTime(totalSecs) {
-    var hrs = String(Math.floor(totalSecs / 3600)).padStart(2, '0');
-    var mins = String(Math.floor((totalSecs % 3600) / 60)).padStart(2, '0');
-    var secs = String(totalSecs % 60).padStart(2, '0');
-    return `${hrs}:${mins}:${secs}`;
+function updateDisplay() {
+    if (timeDisplay) {
+        timeDisplay.innerText = formatTime(totalSeconds);
+    }
+}
+
+if (startBtn && stopBtn && resetBtn) {
+    startBtn.addEventListener('click', () => {
+        if (timerInterval) return; 
+        
+        timerInterval = setInterval(() => {
+            totalSeconds++;
+            studyDatabase.stopwatchTime = totalSeconds;
+            saveDatabase();
+            updateDisplay();
+        }, 1000);
+    });
+
+    stopBtn.addEventListener('click', () => {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    });
+
+    resetBtn.addEventListener('click', () => {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        totalSeconds = 0;
+        studyDatabase.stopwatchTime = 0;
+        saveDatabase();
+        updateDisplay();
+    });
+}
+
+export function initializeStopwatch() {
+    updateDisplay();
 }

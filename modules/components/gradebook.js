@@ -1,33 +1,43 @@
-// ==========================================================================
-// FEATURE COMPONENT MODULE: GRADEBOOK LOGS & TREND CANVASES
-// ==========================================================================
-import { studyDatabase, saveDatabase, escapeHtml, setCurrentAverage } from '../storage.js';
+import { studyDatabase, saveDatabase, escapeHtml, setCurrentAverage } from './storage.js';
 
-var gradingTrendChartInstance = null;
+let gradingTrendChartInstance = null;
 
-document.getElementById('assignment-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    var sub = document.getElementById('assign-subject');
-    var score = document.getElementById('assign-score');
-    var total = document.getElementById('assign-total');
+// Initialize Form Submission
+const form = document.getElementById('assignment-form');
+if (form) {
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const sub = document.getElementById('assign-subject');
+        const score = document.getElementById('assign-score');
+        const total = document.getElementById('assign-total');
 
-    var scoredVal = parseFloat(score.value);
-    var totalVal = parseFloat(total.value);
+        const scoredVal = parseFloat(score.value);
+        const totalVal = parseFloat(total.value);
 
-    if (scoredVal > totalVal) {
-        alert("Scored marks value cannot overflow maximum boundaries limits.");
-        return;
-    }
+        if (scoredVal > totalVal) {
+            alert("Scored marks value cannot overflow maximum boundaries limits.");
+            return;
+        }
 
-    studyDatabase.assignments.push({ name: sub.value.trim(), scored: scoredVal, total: totalVal });
-    saveDatabase();
-    this.reset();
-});
+        studyDatabase.assignments.push({
+            name: sub.value.trim(),
+            scored: scoredVal,
+            total: totalVal
+        });
+
+        saveDatabase();
+        this.reset();
+        renderGradebook();
+    });
+}
 
 export function renderGradebook() {
-    var tableBody = document.getElementById('grades-table-body');
+    const tableBody = document.getElementById('grades-table-body');
+    if (!tableBody) return;
+
     tableBody.innerHTML = '';
-    var aggregateScored = 0, aggregateTotal = 0;
+    let aggregateScored = 0;
+    let aggregateTotal = 0;
 
     if (studyDatabase.assignments.length === 0) {
         tableBody.innerHTML = '<tr><td colspan="5" style="color: var(--text-muted); text-align: center;">No recorded tests found.</td></tr>';
@@ -35,41 +45,61 @@ export function renderGradebook() {
         studyDatabase.assignments.forEach((item, index) => {
             aggregateScored += item.scored;
             aggregateTotal += item.total;
-            var row = document.createElement('tr');
-            row.innerHTML = `<td><strong>${escapeHtml(item.name)}</strong></td><td>${item.scored}</td><td>${item.total}</td><td style="color: var(--accent-success); font-weight:600;">${((item.scored / item.total) * 100).toFixed(1)}%</td><td style="text-align: right;"><button class="delete-btn" data-index="${index}" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:500;">Remove</button></td>`;
+
+            const row = document.createElement('tr');
+            const percent = ((item.scored / item.total) * 100).toFixed(1);
+
+            row.innerHTML = `
+                <td><strong>${escapeHtml(item.name)}</strong></td>
+                <td>${item.scored}</td>
+                <td>${item.total}</td>
+                <td style="color: var(--accent-success); font-weight:600;">${percent}%</td>
+                <td style="text-align: right;">
+                    <button class="delete-btn" data-index="${index}" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:500;">Remove</button>
+                </td>
+            `;
             tableBody.appendChild(row);
         });
 
         tableBody.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                studyDatabase.assignments.splice(parseInt(this.getAttribute('data-index')), 1);
+            btn.addEventListener('click', function () {
+                const targetIndex = parseInt(this.getAttribute('data-index'), 10);
+                studyDatabase.assignments.splice(targetIndex, 1);
                 saveDatabase();
+                renderGradebook();
             });
         });
     }
 
-    var finalAvg = aggregateTotal > 0 ? (aggregateScored / aggregateTotal) * 100 : 0;
+    const finalAvg = aggregateTotal > 0 ? (aggregateScored / aggregateTotal) * 100 : 0;
     setCurrentAverage(finalAvg);
-    
+
     document.getElementById('total-items').innerText = studyDatabase.assignments.length;
     document.getElementById('overall-gpa').innerText = `${finalAvg.toFixed(1)}%`;
     document.getElementById('predict-current-gpa').innerText = `${finalAvg.toFixed(1)}%`;
 
     updateChartGraphics();
 }
-
 function updateChartGraphics() {
-    var ctx = document.getElementById('gradeTrendChart');
+    const ctx = document.getElementById('gradeTrendChart');
     if (!ctx || typeof Chart === 'undefined') return;
 
-    if (gradingTrendChartInstance) gradingTrendChartInstance.destroy();
+    if (gradingTrendChartInstance) {
+        gradingTrendChartInstance.destroy();
+    }
+
+    const hasData = studyDatabase.assignments.length > 0;
+    const labels = hasData ? studyDatabase.assignments.map(i => i.name) : ["No Data"];
+    
+    // FIX: Added the fallback empty array [] after the colon
+    const dataPoints = hasData ? studyDatabase.assignments.map(i => parseFloat(((i.scored / i.total) * 100).toFixed(1))) : [];
 
     gradingTrendChartInstance = new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
-            labels: studyDatabase.assignments.map(i => i.name).length > 0 ? studyDatabase.assignments.map(i => i.name) : ["No Data"],
+            labels: labels,
             datasets: [{
-                data: studyDatabase.assignments.map(i => parseFloat(((i.scored / i.total) * 100).toFixed(1))),
+                data: dataPoints,
                 borderColor: '#6366f1',
                 backgroundColor: 'rgba(99, 102, 241, 0.05)',
                 borderWidth: 3,

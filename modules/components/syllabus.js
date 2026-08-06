@@ -1,46 +1,68 @@
-// ==========================================================================
-// FEATURE COMPONENT MODULE: TEXTBOOK SYLLABUS REGISTRY
-// ==========================================================================
-import { studyDatabase, saveDatabase, escapeHtml } from '../storage.js';
+import { studyDatabase, saveDatabase, escapeHtml } from './storage.js';
 
-document.getElementById('syllabus-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    var sub = document.getElementById('syll-subject');
-    var ch = document.getElementById('syll-chapters');
+const syllabusForm = document.getElementById('syllabus-form');
+if (syllabusForm) {
+    syllabusForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const taskInput = document.getElementById('syllabus-task');
+        const taskText = taskInput.value.trim();
 
-    studyDatabase.syllabus.push({ name: sub.value.trim(), chapters: parseInt(ch.value, 10) });
-    saveDatabase();
-    this.reset();
-});
+        if (!taskText) return;
+
+        studyDatabase.syllabus.push({
+            title: taskText,
+            completed: false
+        });
+
+        saveDatabase();
+        this.reset();
+        renderSyllabus();
+    });
+}
 
 export function renderSyllabus() {
-    var tbody = document.getElementById('syllabus-table-body');
-    tbody.innerHTML = '';
+    const coreList = document.getElementById('syllabus-list');
+    if (!coreList) return;
+
+    coreList.innerHTML = '';
 
     if (studyDatabase.syllabus.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="color: var(--text-muted); text-align: center;">No tracking entries logged yet.</td></tr>';
-    } else {
-        studyDatabase.syllabus.forEach((item, index) => {
-            var row = document.createElement('tr');
-            row.innerHTML = `<td><strong>${escapeHtml(item.name)}</strong></td><td><span style="color:#f59e0b; font-weight:600;">${item.chapters} left</span></td><td style="text-align:right; display:flex; gap:0.5rem; justify-content:flex-end;"><button class="done-ch-btn" data-index="${index}" style="background:#1e293b; color:var(--accent-success); border:1px solid var(--border); padding:0.3rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.8rem; font-weight:600;">📖 Finish 1 Ch</button><button class="del-syll-btn" data-index="${index}" style="background:none; border:none; color:var(--danger); cursor:pointer;">Remove</button></td>`;
-            tbody.appendChild(row);
-        });
-
-        tbody.querySelectorAll('.done-ch-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                var idx = parseInt(this.getAttribute('data-index'));
-                if (studyDatabase.syllabus[idx].chapters > 0) {
-                    studyDatabase.syllabus[idx].chapters--;
-                    saveDatabase();
-                }
-            });
-        });
-
-        tbody.querySelectorAll('.del-syll-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                studyDatabase.syllabus.splice(parseInt(this.getAttribute('data-index')), 1);
-                saveDatabase();
-            });
-        });
+        coreList.innerHTML = '<li style="color: var(--text-muted); text-align: center; list-style: none;">Your syllabus timeline is empty.</li>';
+        return;
     }
+
+    studyDatabase.syllabus.forEach((item, index) => {
+        const itemElement = document.createElement('li');
+        itemElement.style.display = 'flex';
+        itemElement.style.justifyContent = 'space-between';
+        itemElement.style.alignItems = 'center';
+        itemElement.style.marginBottom = '8px';
+
+        itemElement.innerHTML = `
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; ${item.completed ? 'text-decoration: line-through; color: var(--text-muted);' : ''}">
+                <input type="checkbox" class="task-toggle" data-index="${index}" ${item.completed ? 'checked' : ''}>
+                <span>${escapeHtml(item.title)}</span>
+            </label>
+            <button class="task-remove" data-index="${index}" style="background:none; border:none; color:var(--danger); cursor:pointer;">&times;</button>
+        `;
+        coreList.appendChild(itemElement);
+    });
+
+    coreList.querySelectorAll('.task-toggle').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const idx = parseInt(this.getAttribute('data-index'), 10);
+            studyDatabase.syllabus[idx].completed = this.checked;
+            saveDatabase();
+            renderSyllabus();
+        });
+    });
+
+    coreList.querySelectorAll('.task-remove').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const idx = parseInt(this.getAttribute('data-index'), 10);
+            studyDatabase.syllabus.splice(idx, 1);
+            saveDatabase();
+            renderSyllabus();
+        });
+    });
 }
