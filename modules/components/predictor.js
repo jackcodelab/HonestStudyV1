@@ -1,4 +1,4 @@
-import { getCurrentAverage } from '../storage.js';
+import { getCurrentAverage } from './storage.js';
 
 const calcBtn = document.getElementById('calculate-goal-btn');
 if (calcBtn) {
