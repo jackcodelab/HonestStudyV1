@@ -10,6 +10,8 @@ header {
     background: #1e1e24;
     padding: 20px;
     border-radius: 12px;
+    max-width: 900px;
+
 }
 
 h1,h2,h3{
